@@ -19,6 +19,7 @@ email=$LETSENCRYPT_EMAIL # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 if [ -d "$data_path" ]; then
+  echo "$data_path is alreay exists, exiting script ..."
   exit
 fi
 # if [ -d "$data_path" ]; then
@@ -45,6 +46,14 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml run --rm --entry
     -out '$path/fullchain.pem' \
     -subj '/CN=localhost'" certbot
 echo
+
+while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do case $1 in
+  --dump )
+    echo "### Done"
+    exit
+    ;;
+esac; shift; done
+if [[ "$1" == '--' ]]; then shift; fi
 
 
 echo "### Starting nginx ..."
